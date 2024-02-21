@@ -5,47 +5,63 @@
         <title>SVG Scatterplot Homework 1</title>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <style type="text/css">
-            /*TBD*/
-
         </style>
     </head>
     <body>
         <script type="text/javascript">
 
+            const svgW = 500;
+            const svgH = 500;
+            const margin = 50; 
+            const radius = 6;
+
+
             const data = [
                             [200, 40], [170, 100], [400, 60], [100, 150], [410, 300], [120, 220], [310, 260], [400, 110]
             ];
- 
-            const svgWidth = 600;
-            const svgHeight = 400;
-            const margin = 400
-            const radius = 6
 
+            const maxX = d3.max(data, d => d[0]);            
+            const maxY = d3.max(data, d => d[1]);
+
+            const xScale = d3.scaleLinear()
+                             .domain([0, 1000]) 
+                             .range([margin, svgW-margin]); 
+
+            const yScale = d3.scaleLinear()
+                             .domain([0, 1000]) 
+                             .range([svgH-margin, margin]); 
+
+    
             const svg = d3.select("body")
-                        .append("svg")//we are now appending our svg 
-                        .attr("width", svgWidth)//apply width and height specified  
-                        .attr("height", svgHeight);
+                    .append("svg")
+                    .attr("width", svgW)
+                    .attr("height", svgH);
 
+                    const bottomAxis = d3.axisBottom()
+                                .scale(xScale)
+                                .ticks(10);
+          
+            svg.append("g")
+                .attr("transform", "translate(0," + (svgH -margin) + ")") 
+                .call(bottomAxis); 
+                
+            const leftAxis = d3.axisLeft()
+                             .scale(yScale)
+                             .ticks(10); 
+            
+            svg.append("g")
+                 .attr("transform", "translate(" + margin + ",0)") 
+                 .call(leftAxis); 
 
+        
                 svg.selectAll("circle")
                    .data(data)
                    .enter()
                    .append("circle")
-                   .attr("cx", d=>d[0]) //(a required circle value, and a function of what it returns)  // Hint: we want to return d[] with the x value of the array
-                   .attr("cy", d=>svgHeight- d[1]) //(a required circle value, and a function  of what it returns)  // Hint: we want to return d[] with the y value of the array 
-                   .attr("r", 10) //(another required circle value, and a number: try 10) 
-                   .attr("fill", "orange");//optional: change the color of the circles:
-            //HINT: don't forget the ending ;
-
-
-        svg.selectAll("text")
-          .data(data)
-          .enter()
-          .append("text")
-          .text(d=>d) //we want the text to return the data values
-          .attr("x", d =>d [0]) //we want to give the text an x value, use what you used above, mind the difference between circle text properties 
-          .attr("y",d => svgHeight - d[1] ) //we want to give the text a y value, use what you used above, mind the difference between circle text properties 
-          .attr("fill", "blue");
+                   .attr("cx", d => xScale(d[0])) 
+                   .attr("cy", d => yScale(d[1])) 
+                   .attr("r", radius) 
+                   .attr("fill", "orange");
 
         </script>
     </body>
