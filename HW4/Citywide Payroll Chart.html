@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Payroll Line Chart</title>
+        <script src= "https://d3js.org/d3.v7.min.js"></script>
+        <style type="text/css">
+            h {
+                text-align: center;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }
+            .axis path, 
+            .axis line{
+                stroke: midnightblue;
+            }
+
+            .axis text{
+                font-family: sans-serif;
+                font-size: 10px;
+                fill: midnightblue;
+                }
+            
+            .line {
+                fill: none; 
+                stroke: steelblue; 
+                stroke-width: 2px;
+                /*stroke-dasharray: 4 3;*/ /*dashes and gaps*/
+                /*stroke-dasharray: 4 3 2 1;*/
+  
+            }
+        </style>
+    </head>
+    
+    <body> 
+        <h> New York City Payroll Data </h>
+        <script type="text/javascript">
+            // Constants/global variables  
+            const w = 500;
+            const h = 500;
+            const margin = 50; // Rename to margin
+            const parseTime = d3.timeParse("%Y"); // Time parser
+    
+            d3.csv("City payroll data.csv").then(data => {
+                console.log("data", data);
+                    
+                data.forEach(d => { 
+                    d.year = parseTime(d.year); // Parse the time data
+                        d.avg = parseFloat(d.avg.replace(/,/g, '')); // Convert string with commas to float
+                        d.med = parseFloat(d.med.replace(/,/g, '')); // Convert string with commas to float
+                        d.max = parseFloat(d.max.replace(/,/g, '')); // Convert string with commas to float    
+                });
+                
+                // Scales - with Scale Time
+                const xScale = d3.scaleTime()
+                                 .domain(d3.extent(data, d => d.year)) 
+                                 .range([margin, w-margin]); 
+    
+                const yScale = d3.scaleLinear()
+                                 .domain([0, d3.max(data, d => d.avg)]) 
+                                 .range([h-margin, margin]); 
+    
+                // SVG
+                const svg = d3.select("body")
+                              .append("svg")
+                              .attr("width", w)
+                              .attr("height", h);
+    
+                // Bottom axis with tick time formatting
+                const bottomAxis = d3.axisBottom()
+                                     .scale(xScale)
+                                     .tickFormat(d3.timeFormat("%Y"))
+                                     .ticks(5);
+                 
+                svg.append("g")
+                   .attr("class", "axis") 
+                   .attr("transform", "translate(0," + (h - margin) + ")") 
+                   .call(bottomAxis);
+                
+                // Left axis
+                const leftAxis = d3.axisLeft()
+                                   .scale(yScale);
+                
+                svg.append("g")
+                   .attr("class", "axis") 
+                   .attr("transform", "translate(" + margin + ",0)")
+                   .call(leftAxis);
+    
+                // Line generator with optional curves
+                const line = d3.line()
+                               .curve(d3.curveNatural)
+                               .x(d => xScale(d.year))
+                               .y(d => yScale(d.avg));
+               
+                // Append line
+                svg.append("path")
+                   .datum(data)
+                   .attr("d", line)
+                   .attr("class", "line");
+    
+                console.log("path", line(data));
+            });
+        </script>
+    </body>
+</html>

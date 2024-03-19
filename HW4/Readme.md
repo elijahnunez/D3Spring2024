@@ -1,0 +1,1 @@
+Using the NYC Open Data platform, here is the Average, Median, and Max incomes from FY 2019 - FY 2023. 
