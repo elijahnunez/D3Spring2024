@@ -15,7 +15,7 @@
             }
 
             .axis text{
-                font-family: sans-serif;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
                 font-size: 10px;
                 fill: midnightblue;
                 }
@@ -23,6 +23,15 @@
             .line {
                 fill: none; 
                 stroke: steelblue; 
+                stroke-width: 2px;
+                /*stroke-dasharray: 4 3;*/ /*dashes and gaps*/
+                /*stroke-dasharray: 4 3 2 1;*/
+  
+            }
+
+            .line1 {
+                fill: none; 
+                stroke: gray; 
                 stroke-width: 2px;
                 /*stroke-dasharray: 4 3;*/ /*dashes and gaps*/
                 /*stroke-dasharray: 4 3 2 1;*/
@@ -90,12 +99,22 @@
                                .curve(d3.curveNatural)
                                .x(d => xScale(d.year))
                                .y(d => yScale(d.avg));
+
+                const line1 = d3.line()
+                               .curve(d3.curveNatural)
+                               .x(d => xScale(d.year))
+                               .y(d => yScale(d.med));
                
-                // Append line
+                // Append lines
                 svg.append("path")
                    .datum(data)
                    .attr("d", line)
                    .attr("class", "line");
+            
+               svg.append("path")
+                   .datum(data)
+                   .attr("d", line1)
+                   .attr("class", "line1");
     
                 console.log("path", line(data));
             });
