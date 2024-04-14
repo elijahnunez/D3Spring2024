@@ -8,10 +8,25 @@
             h {
                 text-align: center;
                 font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                font-weight: bold;
+            }
+            #title{
+                background: rgb(60, 148, 205);
+                color: aliceblue;
+                height: 50px;
+                text-align: justify;
+
             }
             p {
                 font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             }
+        button {
+            display: inline-flex;
+            border-color: midnightblue;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            border-radius: 5px;
+            font-weight: bold;
+        }
             .axis path, 
             .axis line{
                 stroke: midnightblue;
@@ -42,9 +57,11 @@
             }
         </style>
     </head>
-    <body> 
+    <body>
+        <div id ="title">
         <h> New York City Wide Payroll Data </h>
-        <p> The average and median income per fiscal year </p>
+    </div>
+        <p> Click on the button to select the average and median pays for the last 5 Fiscal Years</p>
         <button id="buttonAvg">Avg Pay</button>
         <button id="buttonMED">Median Pay</button>
         <br>
