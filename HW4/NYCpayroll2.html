@@ -49,87 +49,85 @@
         <button id="buttonMED">Median Pay</button>
         <br>
         <script type="text/javascript">
-     
             const w = 500;
             const h = 500;
-            const margin = 50; 
-            const parseTime = d3.timeParse("%Y"); 
-            
+            const margin = 50;
+            const parseTime = d3.timeParse("%Y");
+        
             d3.csv("City payroll data.csv").then(data => {
-                
+                // Log the data
                 console.log("data", data);
-                    
-                data.forEach(d => { 
-                    d.year = parseTime(d.year); 
-                        d.avg = parseFloat(d.avg.replace(/,/g, '')); 
-                        d.med = parseFloat(d.med.replace(/,/g, '')); 
-                        d.max = parseFloat(d.max.replace(/,/g, ''));  
-                });
                 
-                // Scales - with Scale Time
+                // Parse and convert data
+                data.forEach(d => {
+                    d.year = parseTime(d.year);
+                    d.avg = parseFloat(d.avg.replace(/,/g, ''));
+                    d.med = parseFloat(d.med.replace(/,/g, ''));
+                    d.max = parseFloat(d.max.replace(/,/g, ''));
+                });
+        
+                // Set up scales
                 const xScale = d3.scaleTime()
-                                 .domain(d3.extent(data, d => d.year)) 
-                                 .range([margin, w-margin]); 
-    
+                                 .domain(d3.extent(data, d => d.year))
+                                 .range([margin, w - margin]);
+        
                 const yScale = d3.scaleLinear()
-                                 .domain([0, d3.max(data, d => d.avg)]) 
-                                 .range([h-margin, margin]); 
-    
-                // SVG
-                const svg = d3.select("body")
-                              .append("svg")
+                                 .domain([0, d3.max(data, d => d.avg)])
+                                 .range([h - margin, margin]);
+        
+                // Create SVG element
+                const svg = d3.select("body").append("svg")
                               .attr("width", w)
                               .attr("height", h);
-    
-                // Bottom axis with tick time formatting
-                const bottomAxis = d3.axisBottom()
-                                     .scale(xScale)
+        
+                // Bottom axis
+                const bottomAxis = d3.axisBottom(xScale)
                                      .tickFormat(d3.timeFormat("%Y"))
                                      .ticks(5);
-                 
+        
                 svg.append("g")
-                   .attr("class", "axis") 
-                   .attr("transform", "translate(0," + (h - margin) + ")") 
+                   .attr("class", "axis")
+                   .attr("transform", `translate(0, ${h - margin})`)
                    .call(bottomAxis);
-                
+        
                 // Left axis
-                const leftAxis = d3.axisLeft()
-                                   .scale(yScale);
-                
+                const leftAxis = d3.axisLeft(yScale);
                 svg.append("g")
-                   .attr("class", "axis") 
-                   .attr("transform", "translate(" + margin + ",0)")
+                   .attr("class", "axis")
+                   .attr("transform", `translate(${margin}, 0)`)
                    .call(leftAxis);
-
-            function drawData(which)
-                {
-                    const coords =d3.line()
-                    .x(d=>xScale(d.year))
-                    .y(function(d){
-                        if (which == "avg"){ return yScale(d.avg)}
-                        else if (which == "med"){ return yScale(d.med)}
-                        else {return yScale(d.avg)}
-                    });
-            
-                    const line = svg.selectAll(".line")
-                        .datum([data])
-                        .join("path")
-                        .attr("d", coords)
-                        .attr("class","line");
+        
+                // Function to draw and update line chart
+                function drawData(metric) {
+                    const lineGenerator = d3.line()
+                                            .x(d => xScale(d.year))
+                                            .y(d => yScale(d[metric]));
+        
+                    svg.selectAll(".line")
+                       .data([data])  // Bind the dataset to the line
+                       .join("path")
+                       .attr("class", "line")
+                       .attr("stroke", "steelblue")
+                       .attr("fill", "none")
+                       .attr("stroke-width", 2)
+                       .attr("d", lineGenerator);
                 }
-
-            d3.selectAll("button").on("click", (event,d)=>{
-                const selected = event.currentTarget;
-                    if (selected.id == "buttonAvg"){
-                    drawData("avg")
-                    } else if (selected.id == "buttonMED"){
-                    drawData("med")
-                     } else {
-                    drawData("avg")
-                    }})
-
-            drawData("avg")
+        
+                // Button functionality
+                d3.selectAll("button").on("click", (event) => {
+                    const selected = event.currentTarget;
+                    if (selected.id == "buttonAvg") {
+                        drawData("avg");
+                    } else if (selected.id == "buttonMED") {
+                        drawData("med");
+                    } else {
+                        drawData("avg"); // Fallback or default case, though this branch is optional
+                    }
                 });
+        
+                // Initial draw with average data
+                drawData("avg");
+            });
         </script>
     </body>
 </html>
