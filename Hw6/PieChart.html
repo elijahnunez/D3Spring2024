@@ -2,94 +2,92 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Pie and Doughnut</title>
+        <title>Citi Bike Type Usage June 2023</title>
         <script src= "https://d3js.org/d3.v7.min.js"></script>
         <style type="text/css">
-            
+            html {
+                background-color: aliceblue;
+            }
+            header {
+                background-color: lightblue;
+                color: black;
+                height: 50px;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .pie {
+                margin: auto;
+            }
+
             .labels{
             font-size: 12px;
-            font-weight: bold;
-            font-family: sans-serif;
+            font-weight: 500;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
           }
-
+          body {
+            display: block;
+            margin: auto;
+        }
         </style>
     </head>
+
+    <header>
+        <h> Citi Bike Bike Usage for June 2023</h>
+    </header>
+
     <body>
         <script type="text/javascript">
-        
             d3.csv("Citi Bikes used June 2023.csv").then(data => {
-                console.log("data", data)
-            
-                    //format data
-                    data.forEach(d => { 
-                    d. = d.Bike_Type;
-                    d.amount = +d.amount;
-                    });
+                console.log("data", data);
                 
-            //declare consts
-            const w = 600;
-            const h = 600;
-            //const myColor = d3.scaleOrdinal(d3.schemeSpectral[5]);
-            const myColor = d3.scaleOrdinal(["royalblue", "darkorange", "darkgray", "goldenrod", "cornflowerblue"]);
-
-            //Radius information
-            const outerRadius = w/2;
-            //const outerRadius = 200;
-            const innerRadius = 0; 
-            //const innerRadius = 150; //to make a doughnut!
-           
-            //d3.arc()creates our wedges 
-            const arc = d3.arc()  
-                           .innerRadius(innerRadius)//required 
-                           .outerRadius(outerRadius) //required
-                           //.cornerRadius(10);
-                           //.cornerRadius(100);
-
-            //pie generator
-            const pie = d3.pie().value(d=>d.amount)
-                            //.padAngle(.04);
-                            //.startAngle(-0.5 * Math.PI)
-                            //.endAngle(0.5 * Math.PI);
-                            //.startAngle(0 * Math.PI)
-                            //.endAngle(1 * Math.PI);
-                            //.startAngle(0 * Math.PI)
-                            //.endAngle(0.5 * Math.PI);
-                            // .startAngle(0.5 * Math.PI)
-                            // .endAngle(2 * Math.PI);
-                            // .startAngle(-0.5 * Math.PI)
-                            // .endAngle(0 * Math.PI);
-
-            //SVG
-            const svg = d3.select("body")
-                    .append("svg")
-                    .attr("width", w)
-                    .attr("height", h);
-
-            //groups to build our chart
-            const groups = svg.selectAll("g.arc")
-                            .data(pie(data))//give data to our pie generator
-                            .enter()
-                            .append("g")
-                            .attr("class", "arc")
-                            .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");//arcs transform translate 
-                            console.log("pie data", pie(data));
+                // Format data
+                data.forEach(d => { 
+                    d.part = d.bikeType; // Ensuring you have a 'part' property
+                    d.amount = +d.amount; // Convert 'amount' to number if not already
+                });
             
-            groups.append("path")
-                .attr("fill", (d,i)=> myColor(i))
-                .attr("d", arc); //d of our path 
-
-            //Labels
-            groups.append("text")
-                  .attr("transform", d=> "translate(" + arc.centroid(d) + ")")
-                  .attr("text-anchor", "middle")
-                  .attr("class", "labels")
-                  .text(d=>d.data.part);//in console look at "pie data" to see structure
-
-          /*Note: if you happen to like round / doughnut charts 
-            another option is to think into how you might make a radial
-            bar chart, another common round chart.*/ 
+                const w = 700, h = 700;
+                const myColor = d3.scaleOrdinal(["royalblue", "cornflowerblue"]);
+        
+                // Define the radius and the arc generator for the pie chart
+                const outerRadius = w / 2;
+                const arc = d3.arc()
+                              .innerRadius(0) // Use this for a pie chart, adjust for a donut chart
+                              .outerRadius(outerRadius);
+        
+                // Create pie layout generator for a full circle
+                const pie = d3.pie().value(d => d.amount)
+                                    .startAngle(0) // Full circle start
+                                    .endAngle(2 * Math.PI); // Full circle end
+        
+                // Append SVG for rendering the chart
+                const svg = d3.select("body").append("svg")
+                                .attr("width", w)
+                                .attr("height", h);
+                                
+        
+                // Bind data and create arc paths
+                const groups = svg.selectAll("g.arc")
+                                  .data(pie(data))
+                                  .enter()
+                                  .append("g")
+                                  .attr("class", "arc")
+                                  .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
+        
+                // Draw arc paths
+                groups.append("path")
+                      .attr("fill", (d, i) => myColor(i))
+                      .attr("d", arc);
+        
+                // Add labels to each arc slice
+                groups.append("text")
+                      .attr("transform", d => "translate(" + arc.centroid(d) + ")")
+                      .attr("text-anchor", "middle")
+                      .attr("class", "labels")
+                      .text(d => d.data.bikeType);
             });
-
         </script>
     </body>
 </html>
