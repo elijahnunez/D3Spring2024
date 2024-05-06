@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CUNY Spring Forward Participation
+    </title>
+    <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        
+        const margin = { top: 50, right: 30, bottom: 50, left: 60 };
+        const width = 1000; 
+        const height = 900; 
+
+        d3.csv("Spring Forward Particiaption - Drop Reasons.csv").then(data => {
+            console.log("data", data)
+
+            data.forEach(d => { 
+                d.Reason = d.Reason ;
+                d.Amount = +d.Amount; 
+            });
+
+            const maxY = d3.max(data, d => d.Amount);
+
+
+            // Scales
+            const xScale = d3.scaleBand()
+                            .domain(data.map(d => d.Reason))
+                            .range([margin.left, width - margin.right])
+                            .paddingInner(0.1);
+            
+            const yScale = d3.scaleLinear()
+                            .domain([0, maxY]) 
+                            .range([height - margin.bottom, margin.top]);
+            
+
+            // SVG
+            const svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+
+                        
+            // Axes
+            const xAxis = d3.axisBottom(xScale);
+            const yAxis = d3.axisLeft(yScale);
+
+            svg.append("g")
+                .attr("transform", `translate(0,${height - margin.bottom})`)
+                .call(xAxis); 
+            
+            svg.append("g")
+                .attr("transform", `translate(${margin.left},0)`)
+                .call(yAxis); 
+        
+            // Bars
+            svg.selectAll("rect") 
+                .data(data) 
+                .enter()
+                .append("rect")
+                .attr("y", d => xScale(d.Reason)) 
+                .attr("", d => yScale(d.Amount)) 
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => height - margin.bottom - yScale(d.Amount))
+                .attr("fill", "gray");  
+
+            svg.append("text")
+                .attr("x", width/2)
+                .attr("y", height - 20)
+                .text("Zodiac Signs");
+            
+                svg.append("text")
+                 .attr("transform", "rotate(-90)")
+                .attr("x", -height / 2)
+                .attr("y", margin.left / 2)
+                .text("Amount");
+        });
+    </script>
+</body>
+</html>
