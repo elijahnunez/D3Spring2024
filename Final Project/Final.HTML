@@ -87,23 +87,23 @@
                         .text("Number of Students Who Dropped");
     
                 // Adding Bar Title 
-                svg.append("text")
-                    .attr("x", barWidth/6)
-                    .attr("y", barMargin.top / 2)
-                    .style("font-family", "sans-serif")
-                    .style("text-anchor", "middle")
-                    .style("font-size", "16px")
-                    .style("font-weight", "bold")
-                    .text("Dropout Reasons For Spring Forward");
-    
                     svg.append("text")
-        .attr("transform", "translate(" + (barWidth / 2) + "," + (barHeight + barMargin.bottom) + ")")
-        .style("font-family", "sans-serif")
-        .style("text-anchor", "middle")
-        .style("font-size", "16px")
-        .style("font-weight", "bold")
-        .text("Most students were dropped for unresponsiveness");
-                    });
+                        .attr("x", barWidth/6)
+                        .attr("y", barMargin.top / 2)
+                        .style("font-family", "sans-serif")
+                        .style("text-anchor", "middle")
+                        .style("font-size", "16px")
+                        .style("font-weight", "bold")
+                        .text("Dropout Reasons For Spring Forward");
+        
+                     svg.append("text")
+                        .attr("transform", "translate(" + (barWidth / 2) + "," + (barHeight + barMargin.bottom) + ")")
+                        .style("font-family", "sans-serif")
+                        .style("text-anchor", "middle")
+                        .style("font-size", "16px")
+                        .style("font-weight", "bold")
+                        .text("Most students were dropped for unresponsiveness");
+                        });
     
       //waffle Chart
     
@@ -145,6 +145,15 @@
                     .attr("height", boxSize - 3)
                     .attr("fill", function(d){ return categoryScale(d[categoryHeading]);})
                     .exit();
+
+                svg.append("text")
+                        .attr("x", barWidth/3)
+                        .attr("y", barMargin.top/8)
+                        .style("font-family", "sans-serif")
+                        .style("text-anchor", "middle")
+                        .style("font-size", "16px")
+                        .style("font-weight", "bold")
+                        .text("Dropout Visualization by date")
                 
                 //legend
                 var legend = svg.selectAll(".legend")
@@ -173,8 +182,9 @@
     
             var svg = d3.select("body")
                 .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height)
+                
+                .attr("width", width + 50)
+                .attr("height", height +50 )
     
             var g = svg.append("g")
                 .attr("transform","translate(" + margin.left + "," + margin.top + ")");
@@ -182,9 +192,7 @@
             var categoryHeading = "Participation";
     
             //rainbow colors
-            var colors = d3.scaleSequential(d3.interpolateHclLong("blue", "green"));
-    
-           
+            var colors = d3.scaleSequential(d3.interpolateHclLong("#593EFF", "green"));
     
         </script>
 </body>
