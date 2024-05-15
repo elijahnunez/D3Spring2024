@@ -12,3 +12,5 @@ https://multimedia.report/classes/coding/2019/exercises/basicwafflechart/ (Waffl
 
 
 D3 Fill change over set time interval Stack overflow 
+
+join, Transitions, Fills

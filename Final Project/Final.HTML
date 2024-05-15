@@ -21,143 +21,172 @@
     <h1> Spring Forward 2024 Particiaption</h1>
     <script>
         //Bar Chart
-        const barMargin = { top: 50, right: 30, bottom: 50, left: 60 };
-        const barWidth = 900; 
-        const barHeight = 800; 
-
-        d3.csv("Spring Forward Particiaption - Drop Reasons.csv").then(data => {
-            console.log("data", data)
-
-            data.forEach(d => { 
-                d.Reason = d.Reason;
-                d.Amount = +d.Amount; 
-            });
-
-            const maxY = d3.max(data, d => d.Amount);
-
+            const barMargin = { top: 60, right: 60, bottom: 60, left: 200 };
+            const barWidth = 900; 
+            const barHeight = 800; 
+    
+            d3.csv("Spring Forward Particiaption - Drop Reasons.csv").then(data => {
+                console.log("data", data)
+    
+                data.forEach(d => { 
+                    d.Reason = d.Reason;
+                    d.Amount = +d.Amount; 
+                });
+    
+                data.sort((b, a) => b.Amount - a.Amount);
+                
+                const maxY = 250;
+    
+    
             // Scales
-            const xScale = d3.scaleLinear()
-                            .domain([0, maxY])
-                            .range([barMargin.left, barWidth - barMargin.right]);
-            
-            const yScale = d3.scaleBand()
-                            .domain(data.map(d => d.Reason))
-                            .range([barHeight - barMargin.bottom, barMargin.top])
-                            .paddingInner(0.1);
-
-            // SVG
-            const svg = d3.select("body")
-                        .append("svg")
-                        .attr("width", barWidth)
-                        .attr("height", barHeight);
-
+                const xScale = d3.scaleLinear()
+                                .domain([0, maxY])
+                                .range([barMargin.left, barWidth - barMargin.right]);
+                
+                const yScale = d3.scaleBand()
+                                .domain(data.map(d => d.Reason))
+                                .range([barHeight - barMargin.bottom, barMargin.top])
+                                .paddingInner(0.1);
+    
+    
             // Axes
-            const xAxis = d3.axisBottom(xScale);
-            const yAxis = d3.axisLeft(yScale);
-
-            svg.append("g")
-                .attr("transform", `translate(0,${barHeight - barMargin.bottom})`)
-                .call(xAxis); 
-            
-            svg.append("g")
-                .attr("transform", `translate(${barMargin.left},0)`)
-                .call(yAxis); 
-        
+                const xAxis = d3.axisBottom(xScale)
+                                .tickSize(0);
+    
+                const yAxis = d3.axisLeft(yScale)
+                                .tickSize(0);
+    
+                const svg = d3.select("body")
+                            .append("svg")
+                            .attr("width", barWidth)
+                            .attr("height", barHeight);
+    
+                    svg.append("g")
+                            .attr("transform", `translate(0,${barHeight - barMargin.bottom})`)
+                            .call(xAxis); 
+                        
+                    svg.append("g")
+                            .attr("transform", `translate(${barMargin.left},0)`)
+                            .call(yAxis); 
+                    
             // Bars
-            svg.selectAll("rect") 
-                .data(data) 
-                .enter()
-                .append("rect")
-                .attr("x", xScale(0)) 
-                .attr("y", d => yScale(d.Reason)) 
-                .attr("width", d => xScale(d.Amount) - xScale(0))
-                .attr("height", yScale.bandwidth())
-                .attr("fill","#00488d");  
-
-            svg.append("text")
-                .attr("x", barWidth / 2)
-                .attr("y", barHeight - 20)
-                .text("Amount");
-
-        }); 
-
-        //waffle Chart
-        d3.csv('Spring Forward Particiaption - Dropout .csv').then(function(data, i){
-     
-            //sort data alphabetically
-            data.sort(function(b, a) {return d3.descending(a[categoryHeading], b[categoryHeading]);});
-            
-            //get all of the unique values in the column for the scale
-            var keys = d3.map(data, function(d){ return d[categoryHeading];}).keys();
-            
-            //set domain on category
-            colors.domain([0, keys.length]);
-
-            //convert to a categorical scale
-            var categoryScale = d3.scaleOrdinal(keys.map(function(d, i){ return colors(i);}));
-            categoryScale.domain(keys);//set the scale domain
-            
-            //make the main chart
-            g.selectAll(".square")
-                .data(data)
-                .enter()
-                .append("rect")
-                .attr("class", "square")
-                .attr("x", function(d,i){ return boxSize * (i % howManyAcross); })
-                .attr("y", function(d,i){ return Math.floor(i/howManyAcross) * boxSize; })
-                .attr("width", boxSize - 3)
-                .attr("height", boxSize - 3)
-                .attr("fill", function(d){ return categoryScale(d[categoryHeading]);})
-                .exit();
-            
-            
-            //legend
-            var legend = svg.selectAll(".legend")
-                .data(keys)
-                .enter();
-            
-            
-            legend.append("rect")
-                .attr("x", margin.left + width + boxGap )
-                .attr("y", function(d,i){ return (i * boxSize) + margin.top; })
-                .attr("width", boxSize - 3)
-                .attr("height", boxSize - 3)
-                .attr("fill", function(d){ return categoryScale(d); })
-            
-            legend.append("text")
-                .attr("x", margin.left + width + boxSize + (boxGap*2))
-                .attr("y", function(d,i){ return (i * boxSize) + margin.top; })
-                .append("tspan")
-                .attr("dx", 0)
-                .attr("dy", boxSize/2)
-                .style("alignment-baseline", "middle")
-                .style("font-size", 10)
-                .style("font-family", "Helvetica, Arial, sans-serif")
-                .text(function(d){ return d;})
-        });
-
-        var margin = {top:10,right:150,bottom:30,left:0},
-            width  = 1000 - margin.left - margin.right,
-            height = 1000 - margin.top - margin.bottom,
-            boxSize = 20, //size of each box
-            boxGap = 3, //space between each box
-            howManyAcross = Math.floor(width / boxSize);
-        
-        var svg = d3.select("body")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom));
-
-        var categoryHeading = "Participation"
-
-        var g = svg.append("g")
-            .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-
-        //rainbow colors
-        var colors = d3.scaleSequential(d3.interpolateHclLong("purple", "orange"));
-
-    </script>
+                    svg.selectAll("rect") 
+                        .data(data) 
+                        .enter()
+                        .append("rect")
+                        .attr("x", xScale(0)) 
+                        .attr("y", d => yScale(d.Reason)) 
+                        .attr("width", d => xScale(d.Amount) - xScale(0))
+                        .attr("height", yScale.bandwidth())
+                        .attr("fill","#00488d");  
+    
+                    svg.append("text")
+                        .attr("x", barWidth / 2)
+                        .attr("y", barHeight - 20)
+                        .style("font-family", "sans-serif")
+                        .text("Number of Students Who Dropped");
+    
+                // Adding Bar Title 
+                svg.append("text")
+                    .attr("x", barWidth/6)
+                    .attr("y", barMargin.top / 2)
+                    .style("font-family", "sans-serif")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "16px")
+                    .style("font-weight", "bold")
+                    .text("Dropout Reasons For Spring Forward");
+    
+                    svg.append("text")
+        .attr("transform", "translate(" + (barWidth / 2) + "," + (barHeight + barMargin.bottom) + ")")
+        .style("font-family", "sans-serif")
+        .style("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .text("Most students were dropped for unresponsiveness");
+                    });
+    
+      //waffle Chart
+    
+            var margin = {top:10,right:150,bottom:30,left:10},
+                width  = 1000 - margin.left - margin.right,
+                height = 1000 - margin.top - margin.bottom,
+                boxSize = 20, //size of each box
+                boxGap = 3, //space between each box
+                howManyAcross = Math.floor(width / boxSize);
+    
+            d3.csv('Spring Forward Particiaption - Dropout .csv').then(function(data){
+                // Parse the date
+                data.forEach(function(d) {
+                    d.Date = d3.timeParse("%m/%d/%Y")(d.Date);
+                });
+    
+                // Sort data by date
+                data.sort(function(a, b) { return d3.ascending(a.Date, b.Date); });
+                
+                // Get all of the unique values in the column for the scale
+                var keys = d3.map(data, function(d){ return d[categoryHeading]; }).keys();
+                
+                // Set domain on category
+                colors.domain([0, keys.length]);
+                
+                // Convert to a categorical scale
+                var categoryScale = d3.scaleOrdinal(keys.map(function(d, i){ return colors(i); }));
+                categoryScale.domain(keys); // Set the scale domain
+                
+                //make the chart
+                g.selectAll(".square")
+                    .data(data)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "square")
+                    .attr("x", function(d,i){ return boxSize * (i % howManyAcross); })
+                    .attr("y", function(d,i){ return Math.floor(i/howManyAcross) * boxSize; })
+                    .attr("width", boxSize - 3)
+                    .attr("height", boxSize - 3)
+                    .attr("fill", function(d){ return categoryScale(d[categoryHeading]);})
+                    .exit();
+                
+                //legend
+                var legend = svg.selectAll(".legend")
+                    .data(keys)
+                    .enter();
+                
+                
+                legend.append("rect")
+                    .attr("x", margin.left + width + boxGap )
+                    .attr("y", function(d,i){ return (i * boxSize) + margin.top; })
+                    .attr("width", boxSize - 3)
+                    .attr("height", boxSize - 3)
+                    .attr("fill", function(d){ return categoryScale(d); })
+                
+                legend.append("text")
+                    .attr("x", margin.left + width + boxSize + (boxGap*2))
+                    .attr("y", function(d,i){ return (i * boxSize) + margin.top; })
+                    .append("tspan")
+                    .attr("dx", 0)
+                    .attr("dy", boxSize/2)
+                    .style("alignment-baseline", "middle")
+                    .style("font-size", 10)
+                    .style("font-family", "Helvetica, Arial, sans-serif")
+                    .text(function(d){ return d;})
+            });
+    
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height)
+    
+            var g = svg.append("g")
+                .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+    
+            var categoryHeading = "Participation";
+    
+            //rainbow colors
+            var colors = d3.scaleSequential(d3.interpolateHclLong("blue", "green"));
+    
+           
+    
+        </script>
 </body>
 </html>
 
