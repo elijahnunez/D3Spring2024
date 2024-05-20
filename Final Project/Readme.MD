@@ -9,8 +9,4 @@ Understanding attrition in the program is crucial for setting our goals, so visu
 
 ### Refrences
 https://multimedia.report/classes/coding/2019/exercises/basicwafflechart/ (Waffle Chart Code)
-
-
-D3 Fill change over set time interval Stack overflow 
-
-join, Transitions, Fills
+https://github.com/datavizdad/d3areachartseries/tree/main/part%203 (Date Slider)
